@@ -137,6 +137,7 @@ E.g by default, the `int` validator used in the example will use your fields lab
 
 ## TODO
 
+* initialValues
 * Integration testing
 * Async validation
 * Error message support for all [validator.js](https://github.com/chriso/validator.js) validators
