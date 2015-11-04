@@ -1,0 +1,17 @@
+{
+  "ecmaFeatures": {
+    "modules": true
+  },
+  "env": {
+    "browser": false,
+    "node": true
+  },
+  "parser": "babel-eslint",
+  "rules": {
+    "quotes": [2, "single"],
+    "semi": [2, "never"],                                                                       // http://eslint.org/docs/rules/semi
+    "indent": [2, 2, {"SwitchCase": 1}],                // http://eslint.org/docs/rules/indent
+    "strict": [2, "never"],
+  } 
+}
+
