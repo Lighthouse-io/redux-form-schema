@@ -134,3 +134,9 @@ validate: {
 There is built in support for error messages on some of the validators, but not all (yet). Any that aren't yet included will return a generic error message and can be overrided by your fields `error` property.
 
 E.g by default, the `int` validator used in the example will use your fields label property and the validation options to return an error message such as, 'Age should be between 0 and 100'.
+
+## TODO
+
+* Integration testing
+* Async validation
+* Error message support for all [validator.js](https://github.com/chriso/validator.js) validators
