@@ -108,8 +108,8 @@ var exampleValidValues = {
   'date-of-birth': new Date('1987/04/24').toString(),
   'score': '78',
   'category': 'red',
-  'latitude': 0,
-  'longitude': 0
+  'latitude': '0',
+  'longitude': '0'
 };
 
 describe('buildValidationFn', function () {
@@ -130,10 +130,16 @@ describe('buildValidationFn', function () {
     validate(exampleValidValues).should.be.an.Object().and.be.empty();
   });
 
-  it('should validate required fields', function () {
+  it.only('should validate required fields', function () {
     // Required assertions
     var exampleValuesWithMissingName = (0, _omit2.default)(exampleValidValues, 'name');
     validate(exampleValuesWithMissingName).should.be.an.Object().and.have.property('name', ['Name is Required']);
+
+    // empty required string should invalidate
+    var exampleValuesWithEmptyName = Object.assign({}, exampleValidValues, {
+      name: ''
+    });
+    validate(exampleValuesWithEmptyName).should.be.an.Object().and.have.property('name', ['Name is Required']);
 
     // DoB is not required and should pass validation if missing
     var exampleValuesWithNoDob = (0, _omit2.default)(exampleValidValues, 'date-of-birth');

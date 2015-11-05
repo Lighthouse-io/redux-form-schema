@@ -24,6 +24,10 @@ var _isUndefined = require('lodash/lang/isUndefined');
 
 var _isUndefined2 = _interopRequireDefault(_isUndefined);
 
+var _isString = require('lodash/lang/isString');
+
+var _isString2 = _interopRequireDefault(_isString);
+
 var _errorMessages = require('./error-messages');
 
 var _errorMessages2 = _interopRequireDefault(_errorMessages);
@@ -56,7 +60,7 @@ function buildValidationFn(schema) {
       var error = definition.error;
 
       var fieldValue = formValues[fieldRef];
-      var fieldValueExists = !(0, _isUndefined2.default)(formValues[fieldRef]);
+      var fieldValueExists = isDefined(formValues[fieldRef]);
 
       // required is active if it is `true` or a function that returns
       // true when passed the form values as an argument. This allows
@@ -151,4 +155,8 @@ function validates(validatorId, value, opts) {
     default:
       return validatorFn(value, opts);
   }
+}
+
+function isDefined(value) {
+  return (0, _isString2.default)(value) && value.length > 0;
 }
