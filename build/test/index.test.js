@@ -1,9 +1,24 @@
-import build from '../';
-import should from 'should';
-import omit from 'lodash/object/omit';
-import contains from 'lodash/collection/contains';
+'use strict';
 
-const exampleSchema = {
+var _ = require('../');
+
+var _2 = _interopRequireDefault(_);
+
+var _should = require('should');
+
+var _should2 = _interopRequireDefault(_should);
+
+var _omit = require('lodash/object/omit');
+
+var _omit2 = _interopRequireDefault(_omit);
+
+var _contains = require('lodash/collection/contains');
+
+var _contains2 = _interopRequireDefault(_contains);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var exampleSchema = {
   'name': {
     label: 'Name',
     required: true,
@@ -26,10 +41,12 @@ const exampleSchema = {
     label: 'City',
     error: 'A valid City is required if you enter a Street Address',
     // required if street address exists
-    required: formValues => formValues['street-address'],
+    required: function required(formValues) {
+      return formValues['street-address'];
+    },
     validate: {
-      validCity: (formValues, fieldValue) => {
-        return contains(['Melbourne', 'New York', 'London'], fieldValue);
+      validCity: function validCity(formValues, fieldValue) {
+        return (0, _contains2.default)(['Melbourne', 'New York', 'London'], fieldValue);
       }
     }
   },
@@ -58,7 +75,9 @@ const exampleSchema = {
   },
   'latitude': {
     label: 'Latitude',
-    required: formValues => formValues.longitude,
+    required: function required(formValues) {
+      return formValues.longitude;
+    },
     validate: {
       float: {
         min: -90,
@@ -68,7 +87,9 @@ const exampleSchema = {
   },
   'longitude': {
     label: 'Longitude',
-    required: formValues => formValues.latitude,
+    required: function required(formValues) {
+      return formValues.latitude;
+    },
     validate: {
       float: {
         min: -180,
@@ -79,7 +100,7 @@ const exampleSchema = {
 };
 
 // use this as a base and extend with invalid values in test
-const exampleValidValues = {
+var exampleValidValues = {
   'name': 'Will McClellan',
   'email': 'you@example.com',
   'street-address': '17 Budd St',
@@ -91,42 +112,43 @@ const exampleValidValues = {
   'longitude': 0
 };
 
-describe('buildValidationFn', () => {
-  const formSchema = build(exampleSchema);
-  const { fields, validate } = formSchema;
+describe('buildValidationFn', function () {
+  var formSchema = (0, _2.default)(exampleSchema);
+  var fields = formSchema.fields;
+  var validate = formSchema.validate;
 
-  it('should build a redux form validation fn based on a schema', () => {
-    should.exist(formSchema);
+  it('should build a redux form validation fn based on a schema', function () {
+    _should2.default.exist(formSchema);
     formSchema.should.have.keys('fields', 'validate');
     fields.should.be.an.Array();
     fields.should.eql(Object.keys(exampleSchema));
     validate.should.be.a.Function();
   });
 
-  it('should validate valid values', () => {
+  it('should validate valid values', function () {
     // assert valid values pass validation
     validate(exampleValidValues).should.be.an.Object().and.be.empty();
   });
 
-  it('should validate required fields', () => {
+  it('should validate required fields', function () {
     // Required assertions
-    const exampleValuesWithMissingName = omit(exampleValidValues, 'name');
+    var exampleValuesWithMissingName = (0, _omit2.default)(exampleValidValues, 'name');
     validate(exampleValuesWithMissingName).should.be.an.Object().and.have.property('name', ['Name is Required']);
 
     // DoB is not required and should pass validation if missing
-    const exampleValuesWithNoDob = omit(exampleValidValues, 'date-of-birth');
+    var exampleValuesWithNoDob = (0, _omit2.default)(exampleValidValues, 'date-of-birth');
     validate(exampleValuesWithNoDob).should.be.an.Object().and.be.empty();
 
     // conditional required
-    let exampleValuesWithMissingConditionalRequired = omit(Object.assign({}, exampleValidValues), 'city');
+    var exampleValuesWithMissingConditionalRequired = (0, _omit2.default)(Object.assign({}, exampleValidValues), 'city');
     validate(exampleValuesWithMissingConditionalRequired).should.be.an.Object().and.have.property('city', ['A valid City is required if you enter a Street Address']);
-    exampleValuesWithMissingConditionalRequired = omit(exampleValuesWithMissingConditionalRequired, 'street-address');
+    exampleValuesWithMissingConditionalRequired = (0, _omit2.default)(exampleValuesWithMissingConditionalRequired, 'street-address');
     validate(exampleValuesWithMissingConditionalRequired).should.be.an.Object().and.be.empty();
   });
 
-  it('should validate types', () => {
+  it('should validate types', function () {
     // Valid Type Assertions
-    const exampleValuesWithInvalidEmail = Object.assign({}, exampleValidValues, {
+    var exampleValuesWithInvalidEmail = Object.assign({}, exampleValidValues, {
       email: 'example.com' // invalid email
     });
     validate(exampleValuesWithInvalidEmail).should.be.an.Object()
@@ -134,9 +156,9 @@ describe('buildValidationFn', () => {
     .and.have.property('email', ['You must enter an email address for your account']);
   });
 
-  it('should validate complex validations', () => {
+  it('should validate complex validations', function () {
     // Validate 'In' Assertions
-    const exampleValuesWithInvalidCategory = Object.assign({}, exampleValidValues, {
+    var exampleValuesWithInvalidCategory = Object.assign({}, exampleValidValues, {
       category: 'pink' // invalid enum
     });
     validate(exampleValuesWithInvalidCategory).should.be.an.Object()
@@ -144,7 +166,7 @@ describe('buildValidationFn', () => {
     .and.have.property('category', ['Category should be one of red, green, blue']);
 
     // Validate 'Int' Assertions
-    const exampleValuesWithInvalidScore = Object.assign({}, exampleValidValues, {
+    var exampleValuesWithInvalidScore = Object.assign({}, exampleValidValues, {
       score: '101' // invalid int
     });
     validate(exampleValuesWithInvalidScore).should.be.an.Object()
@@ -152,22 +174,22 @@ describe('buildValidationFn', () => {
     .and.have.property('score', ['Score should be between 0 and 100']);
   });
 
-  it('should validate complex validations conditionally', () => {
+  it('should validate complex validations conditionally', function () {
 
-    const exampleValuesWithoutGeo = omit(exampleValidValues, ['latitude', 'longitude']);
+    var exampleValuesWithoutGeo = (0, _omit2.default)(exampleValidValues, ['latitude', 'longitude']);
     validate(exampleValuesWithoutGeo).should.be.an.Object().and.be.empty();
 
-    const exampleValuesWithoutLatitude = omit(exampleValidValues, 'latitude');
+    var exampleValuesWithoutLatitude = (0, _omit2.default)(exampleValidValues, 'latitude');
     validate(exampleValuesWithoutLatitude).should.be.an.Object().and.have.property('latitude', ['Latitude is Required']);
   });
 
-  it('should validate custom validation function', () => {
-    const exampleValuesWithValidCustomData = Object.assign({}, exampleValidValues, {
+  it('should validate custom validation function', function () {
+    var exampleValuesWithValidCustomData = Object.assign({}, exampleValidValues, {
       city: 'Melbourne' // Melbourne is valid
     });
     validate(exampleValuesWithValidCustomData).should.be.an.Object().and.be.empty();
 
-    const exampleValuesWithInvalidCustomData = Object.assign({}, exampleValidValues, {
+    var exampleValuesWithInvalidCustomData = Object.assign({}, exampleValidValues, {
       city: 'Sydney' // sydney is an invalid city on our custom validator
     });
     validate(exampleValuesWithInvalidCustomData).should.be.an.Object().and.have.property('city', ['A valid City is required if you enter a Street Address']);
@@ -175,8 +197,8 @@ describe('buildValidationFn', () => {
 
   // testing this as it's the only difference between the validator
   // api and our schema definition
-  it('should validate length validator', () => {
-    const exampleValuesWithInvalidLength = Object.assign({}, exampleValidValues, {
+  it('should validate length validator', function () {
+    var exampleValuesWithInvalidLength = Object.assign({}, exampleValidValues, {
       name: 'Thisnameistoolongandshoulderror'
     });
     validate(exampleValuesWithInvalidLength).should.be.an.Object().and.have.property('name', ['Name should be a minimum of 0 and a maximum of 20 characters']);

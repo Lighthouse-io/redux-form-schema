@@ -9,11 +9,15 @@
     "test": "mocha --compilers js:babel/register --reporter Spec --grep ${grep:-''} lib/**/*.test.js",
     "test:watch": "npm test -- --watch"
   },
+  "babel": {
+    "presets": ["es2015"]
+  },
   "author": "https://github.com/willmcclellan",
   "license": "MIT",
   "devDependencies": {
     "babel-cli": "^6.1.1",
     "babel-eslint": "^4.1.3",
+    "babel-preset-es2015": "^6.0.15",
     "eslint": "^1.8.0",
     "mocha": "^2.3.3"
   },

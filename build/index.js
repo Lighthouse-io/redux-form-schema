@@ -1,48 +1,78 @@
-import validator, { isInt } from 'validator';
-import each from 'lodash/collection/each';
-import startCase from 'lodash/string/startCase';
-import isFunction from 'lodash/lang/isFunction';
-import isUndefined from 'lodash/lang/isUndefined';
-import errorMessages from './error-messages';
+'use strict';
 
-export default (schema => {
-  const fields = Object.keys(schema);
-  const validate = buildValidationFn(schema);
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _validator = require('validator');
+
+var _validator2 = _interopRequireDefault(_validator);
+
+var _each = require('lodash/collection/each');
+
+var _each2 = _interopRequireDefault(_each);
+
+var _startCase = require('lodash/string/startCase');
+
+var _startCase2 = _interopRequireDefault(_startCase);
+
+var _isFunction = require('lodash/lang/isFunction');
+
+var _isFunction2 = _interopRequireDefault(_isFunction);
+
+var _isUndefined = require('lodash/lang/isUndefined');
+
+var _isUndefined2 = _interopRequireDefault(_isUndefined);
+
+var _errorMessages = require('./error-messages');
+
+var _errorMessages2 = _interopRequireDefault(_errorMessages);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+exports.default = function (schema) {
+  var fields = Object.keys(schema);
+  var validate = buildValidationFn(schema);
   return {
-    fields,
-    validate
+    fields: fields,
+    validate: validate
   };
-})
+};
 
 function buildValidationFn(schema) {
-  return formValues => {
-    const errors = {};
+  return function (formValues) {
+    var errors = {};
 
     if (!formValues) {
       return errors;
     }
 
     // TODO this could possibly be done with lodash transform
-    each(schema, (definition, fieldRef) => {
-      const { label, required, type, validate, error } = definition;
-      const fieldValue = formValues[fieldRef];
-      const fieldValueExists = !isUndefined(formValues[fieldRef]);
+    (0, _each2.default)(schema, function (definition, fieldRef) {
+      var label = definition.label;
+      var required = definition.required;
+      var type = definition.type;
+      var validate = definition.validate;
+      var error = definition.error;
+
+      var fieldValue = formValues[fieldRef];
+      var fieldValueExists = !(0, _isUndefined2.default)(formValues[fieldRef]);
 
       // required is active if it is `true` or a function that returns
       // true when passed the form values as an argument. This allows
       // you to perform conditional requires based on other values in
       // the form
-      const isRequired = required && required === true || isFunction(required) && !isUndefined(required(formValues));
+      var isRequired = required && required === true || (0, _isFunction2.default)(required) && !(0, _isUndefined2.default)(required(formValues));
 
       // validate required
       if (isRequired && !fieldValueExists) {
-        addErrorToField(errors, fieldRef, error || errorMessages('required', label));
+        addErrorToField(errors, fieldRef, error || (0, _errorMessages2.default)('required', label));
       }
 
       // validate simple type validators
       if (fieldValueExists && type && !validates(type, fieldValue)) {
         // use custom error message or fallback to default
-        const message = error || errorMessages(type, label);
+        var message = error || (0, _errorMessages2.default)(type, label);
         addErrorToField(errors, fieldRef, message);
       }
 
@@ -52,7 +82,7 @@ function buildValidationFn(schema) {
         // only validate if rule doesnt exist, or rule exists and the
         // function returns true when passed formValues
 
-        each(validate, (opts, id) => {
+        (0, _each2.default)(validate, function (opts, id) {
           // TODO support array of validate's which will allow multiple
           // rule based validations
 
@@ -61,8 +91,8 @@ function buildValidationFn(schema) {
             return;
           }
 
-          let isValid;
-          const customValidator = isFunction(opts) && opts;
+          var isValid = undefined;
+          var customValidator = (0, _isFunction2.default)(opts) && opts;
 
           if (customValidator) {
             isValid = customValidator(formValues, fieldValue);
@@ -72,7 +102,7 @@ function buildValidationFn(schema) {
 
           if (!isValid) {
             // use custom error message or fallback to default
-            const message = error || errorMessages(id, label, opts);
+            var message = error || (0, _errorMessages2.default)(id, label, opts);
             addErrorToField(errors, fieldRef, message);
           }
         });
@@ -93,8 +123,8 @@ function addErrorToField(errors, fieldRef, errorMessage) {
 // validatorId = 'date' => validator.isDate
 // validatorId = 'creditCard' => validator.isCreditCard
 function getValidator(validatorId) {
-  const validatorIdInStartCase = startCase(validatorId);
-  const validatorFn = validator[`is${ validatorIdInStartCase }`];
+  var validatorIdInStartCase = (0, _startCase2.default)(validatorId);
+  var validatorFn = _validator2.default['is' + validatorIdInStartCase];
   return validatorFn;
 }
 
@@ -105,9 +135,9 @@ function getValidator(validatorId) {
  * @param {Mixed} ...opts if applicable
  */
 function validates(validatorId, value, opts) {
-  const validatorFn = getValidator(validatorId);
+  var validatorFn = getValidator(validatorId);
   if (!validatorFn) {
-    return console.warn(`Missing validator for '${ validatorId }'`);
+    return console.warn('Missing validator for \'' + validatorId + '\'');
   }
 
   switch (validatorId) {
