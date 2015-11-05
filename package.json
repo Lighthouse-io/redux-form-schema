@@ -2,7 +2,7 @@
   "name": "redux-form-schema",
   "version": "0.0.1",
   "description": "Extension to Redux Form allowing creation of schemas (with valididation) to manage your form fields",
-  "main": "index.js",
+  "main": "build/index.js",
   "scripts": {
     "clean": "rm -r -f build/*",
     "release": "npm run clean && node_modules/.bin/babel lib --out-dir build",
