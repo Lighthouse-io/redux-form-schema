@@ -6,8 +6,13 @@ import contains from 'lodash/collection/contains';
 const exampleSchema = {
   'name': {
     label: 'Name',
-    error: 'The name field is required',
-    required: true
+    required: true,
+    validate: {
+      length: {
+        min: 0,
+        max: 20
+      }
+    }
   },
   'email': {
     label: 'Email',
@@ -106,9 +111,7 @@ describe('buildValidationFn', () => {
   it('should validate required fields', () => {
     // Required assertions
     const exampleValuesWithMissingName = omit(exampleValidValues, 'name');
-    validate(exampleValuesWithMissingName).should.be.an.Object()
-    // also checking for custom error message here
-    .and.have.property('name', ['The name field is required']);
+    validate(exampleValuesWithMissingName).should.be.an.Object().and.have.property('name', ['Name is Required']);
 
     // DoB is not required and should pass validation if missing
     const exampleValuesWithNoDob = omit(exampleValidValues, 'date-of-birth');
@@ -168,5 +171,14 @@ describe('buildValidationFn', () => {
       city: 'Sydney' // sydney is an invalid city on our custom validator
     });
     validate(exampleValuesWithInvalidCustomData).should.be.an.Object().and.have.property('city', ['A valid City is required if you enter a Street Address']);
+  });
+
+  // testing this as it's the only difference between the validator
+  // api and our schema definition
+  it('should validate length validator', () => {
+    const exampleValuesWithInvalidLength = Object.assign({}, exampleValidValues, {
+      name: 'Thisnameistoolongandshoulderror'
+    });
+    validate(exampleValuesWithInvalidLength).should.be.an.Object().and.have.property('name', ['Name should be a minimum of 0 and a maximum of 20 characters']);
   });
 });

@@ -1,9 +1,6 @@
 import { isInt } from 'validator';
 
-export default function errorMessageGenerator(validatorId, label, ...opts) {
-
-  opts = opts || [];
-  const [primaryOption, secondaryOption] = opts;
+export default function errorMessageGenerator(validatorId, label, opts) {
 
   switch (validatorId) {
 
@@ -14,26 +11,25 @@ export default function errorMessageGenerator(validatorId, label, ...opts) {
       return `${ label } should be a valid Email Address`;
 
     case 'in':
-      return `${ label } should be one of ${ primaryOption.join(', ') }`;
+      return `${ label } should be one of ${ opts.join(', ') }`;
 
     case 'numeric':
       return `${ label } should only contain numbers`;
 
     case 'int':
 
-      // NOTE we're using isInt here to make sure that
-      // the primaryOption value is not 0
+      opts = opts || {};
 
-      if (primaryOption && isInt(primaryOption.min) && isInt(primaryOption.max)) {
-        return `${ label } should be between ${ primaryOption.min } and ${ primaryOption.max }`;
+      if (isInt(opts.min) && isInt(opts.max)) {
+        return `${ label } should be between ${ opts.min } and ${ opts.max }`;
       }
 
-      if (primaryOption && isInt(primaryOption.min)) {
-        return `${ label } should be at least ${ primaryOption.min }`;
+      if (isInt(opts.min)) {
+        return `${ label } should be at least ${ opts.min }`;
       }
 
-      if (primaryOption && isInt(primaryOption.max)) {
-        return `${ label } should be at most ${ primaryOption.max }`;
+      if (isInt(opts.max)) {
+        return `${ label } should be at most ${ opts.max }`;
       }
 
       // otherwise message should just require integer value
@@ -45,21 +41,26 @@ export default function errorMessageGenerator(validatorId, label, ...opts) {
     case 'before':
     case 'after':
 
-      if (primaryOption) {
-        return `${ label } should be ${ validatorId } ${ primaryOption.toString() }`;
+      if (opts) {
+        return `${ label } should be ${ validatorId } ${ opts.toString() }`;
       }
 
       return `${ label } should be ${ validatorId } Current Time`;
 
     case 'length':
 
-      // primary = min, secondary = max
-      if (primaryOption && secondaryOption) {
-        return `${ label } should be a minimum of ${ primaryOption } and a maximum of ${ secondaryOption } characters`;
+      opts = opts || {};
+
+      if (isInt(opts.min) && isInt(opts.max)) {
+        return `${ label } should be a minimum of ${ opts.min } and a maximum of ${ opts.max } characters`;
       }
 
-      if (primaryOption) {
-        return `${ label } should be a minimum of ${ primaryOption } characters`;
+      if (isInt(opts.min)) {
+        return `${ label } should be a minimum of ${ opts.min } characters`;
+      }
+
+      if (isInt(opts.max)) {
+        return `${ label } should be a maximum of ${ opts.max } characters`;
       }
 
       return `${ label } is an Invalid length`;
