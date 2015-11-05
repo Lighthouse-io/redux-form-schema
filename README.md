@@ -135,6 +135,23 @@ There is built in support for error messages on some of the validators, but not 
 
 E.g by default, the `int` validator used in the example will use your fields label property and the validation options to return an error message such as, 'Age should be between 0 and 100'.
 
+## Gotchas
+
+The only difference when specifying schema validation in relation to the [validator.js](https://github.com/chriso/validator.js) API is the `length` validator. In `redux-form-schema` you specify min and max length as an object, just like with the `int` validator, e.g:
+
+```
+{
+  name: {
+    validate: {
+      length: {
+        min: 0,
+        max: 20
+      }
+    }
+  }
+}
+```
+
 ## Credits
 
 * [redux-form]()
