@@ -135,6 +135,12 @@ There is built in support for error messages on some of the validators, but not 
 
 E.g by default, the `int` validator used in the example will use your fields label property and the validation options to return an error message such as, 'Age should be between 0 and 100'.
 
+## Credits
+
+* [redux-form]()
+* [validator.js](https://github.com/chriso/validator.js)
+* @nicgordon for the idea to use a schema as a way to manage forms
+
 ## TODO
 
 * initialValues
