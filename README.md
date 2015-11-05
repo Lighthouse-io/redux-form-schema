@@ -139,7 +139,7 @@ E.g by default, the `int` validator used in the example will use your fields lab
 
 * [redux-form]()
 * [validator.js](https://github.com/chriso/validator.js)
-* @nicgordon for the idea to use a schema as a way to manage forms
+* [@nicgordon](https://github.com/nicgordon) for the idea to use a schema as a way to manage forms
 
 ## TODO
 
