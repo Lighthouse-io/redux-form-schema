@@ -127,7 +127,14 @@ describe('buildValidationFn', function () {
 
   it('should validate valid values', function () {
     // assert valid values pass validation
-    validate(exampleValidValues).should.be.an.Object().and.be.empty();
+    validate(Object.assign({}, exampleValidValues)).should.be.an.Object().and.be.empty();
+
+    // should validate with non-string values
+    var exampleValidValuesWithNonString = Object.assign({}, exampleValidValues, {
+      latitude: 0,
+      longitude: '90'
+    });
+    validate(exampleValidValuesWithNonString).should.be.an.Object().and.be.empty();
   });
 
   it('should validate required fields', function () {

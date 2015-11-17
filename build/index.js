@@ -158,5 +158,5 @@ function validates(validatorId, value, opts) {
 }
 
 function isDefined(value) {
-  return (0, _isString2.default)(value) && value.length > 0;
+  return typeof value !== 'undefined' && String(value).length > 0;
 }
