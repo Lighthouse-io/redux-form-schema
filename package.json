@@ -1,6 +1,6 @@
 {
   "name": "redux-form-schema",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Extension to Redux Form allowing creation of schemas (with valididation) to manage your form fields",
   "main": "build/index.js",
   "scripts": {
