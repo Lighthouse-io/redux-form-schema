@@ -66,7 +66,7 @@ function buildValidationFn(schema) {
       // true when passed the form values as an argument. This allows
       // you to perform conditional requires based on other values in
       // the form
-      var isRequired = required && required === true || (0, _isFunction2.default)(required) && !(0, _isUndefined2.default)(required(formValues));
+      var isRequired = required && required === true || (0, _isFunction2.default)(required) && required(formValues);
 
       // validate required
       if (isRequired && !fieldValueExists) {

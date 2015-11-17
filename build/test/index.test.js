@@ -76,7 +76,7 @@ var exampleSchema = {
   'latitude': {
     label: 'Latitude',
     required: function required(formValues) {
-      return formValues.longitude;
+      return !!formValues.longitude;
     },
     validate: {
       float: {
@@ -88,7 +88,7 @@ var exampleSchema = {
   'longitude': {
     label: 'Longitude',
     required: function required(formValues) {
-      return formValues.latitude;
+      return !!formValues.latitude;
     },
     validate: {
       float: {
@@ -130,7 +130,7 @@ describe('buildValidationFn', function () {
     validate(exampleValidValues).should.be.an.Object().and.be.empty();
   });
 
-  it.only('should validate required fields', function () {
+  it('should validate required fields', function () {
     // Required assertions
     var exampleValuesWithMissingName = (0, _omit2.default)(exampleValidValues, 'name');
     validate(exampleValuesWithMissingName).should.be.an.Object().and.have.property('name', ['Name is Required']);
