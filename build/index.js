@@ -12,6 +12,14 @@ var _each = require('lodash/collection/each');
 
 var _each2 = _interopRequireDefault(_each);
 
+var _reduce = require('lodash/collection/reduce');
+
+var _reduce2 = _interopRequireDefault(_reduce);
+
+var _set = require('lodash/object/set');
+
+var _set2 = _interopRequireDefault(_set);
+
 var _startCase = require('lodash/string/startCase');
 
 var _startCase2 = _interopRequireDefault(_startCase);
@@ -32,6 +40,10 @@ var _errorMessages = require('./error-messages');
 
 var _errorMessages2 = _interopRequireDefault(_errorMessages);
 
+var _flat = require('flat');
+
+var _flat2 = _interopRequireDefault(_flat);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 exports.default = function (schema) {
@@ -50,6 +62,8 @@ function buildValidationFn(schema) {
     if (!formValues) {
       return errors;
     }
+
+    formValues = (0, _flat2.default)(formValues);
 
     // TODO this could possibly be done with lodash transform
     (0, _each2.default)(schema, function (definition, fieldRef) {
@@ -113,7 +127,13 @@ function buildValidationFn(schema) {
       }
     });
 
-    return errors;
+    return (0, _flat.unflatten)(errors);
+
+    // const transformedErrors = reduce(errors, (accumulator, field, key) => {
+    //   return set(accumulator, key, field)
+    // }, {})
+
+    // return transformedErrors
   };
 }
 

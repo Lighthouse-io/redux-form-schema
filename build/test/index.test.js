@@ -34,15 +34,15 @@ var exampleSchema = {
     error: 'You must enter an email address for your account',
     type: 'email'
   },
-  'street-address': {
+  'address.street': {
     label: 'Street Address'
   },
-  'city': {
+  'address.city': {
     label: 'City',
     error: 'A valid City is required if you enter a Street Address',
     // required if street address exists
     required: function required(formValues) {
-      return formValues['street-address'];
+      return formValues['address.street'];
     },
     validate: {
       validCity: function validCity(formValues, fieldValue) {
@@ -103,8 +103,10 @@ var exampleSchema = {
 var exampleValidValues = {
   'name': 'Will McClellan',
   'email': 'you@example.com',
-  'street-address': '17 Budd St',
-  'city': 'Melbourne',
+  'address': {
+    'street': '17 Budd St',
+    'city': 'Melbourne'
+  },
   'date-of-birth': new Date('1987/04/24').toString(),
   'score': '78',
   'category': 'red',
@@ -153,9 +155,15 @@ describe('buildValidationFn', function () {
     validate(exampleValuesWithNoDob).should.be.an.Object().and.be.empty();
 
     // conditional required
-    var exampleValuesWithMissingConditionalRequired = (0, _omit2.default)(Object.assign({}, exampleValidValues), 'city');
-    validate(exampleValuesWithMissingConditionalRequired).should.be.an.Object().and.have.property('city', ['A valid City is required if you enter a Street Address']);
-    exampleValuesWithMissingConditionalRequired = (0, _omit2.default)(exampleValuesWithMissingConditionalRequired, 'street-address');
+    var exampleValuesWithMissingConditionalRequired = Object.assign({}, exampleValidValues);
+    delete exampleValuesWithMissingConditionalRequired.address.city;
+    validate(exampleValuesWithMissingConditionalRequired).should.eql({
+      address: {
+        city: ['A valid City is required if you enter a Street Address']
+      }
+    });
+    // validation should pass once that conditional value is removed
+    delete exampleValuesWithMissingConditionalRequired.address.street;
     validate(exampleValuesWithMissingConditionalRequired).should.be.an.Object().and.be.empty();
   });
 
@@ -203,9 +211,15 @@ describe('buildValidationFn', function () {
     validate(exampleValuesWithValidCustomData).should.be.an.Object().and.be.empty();
 
     var exampleValuesWithInvalidCustomData = Object.assign({}, exampleValidValues, {
-      city: 'Sydney' // sydney is an invalid city on our custom validator
+      address: {
+        city: 'Sydney' // sydney is an invalid city on our custom validator
+      }
     });
-    validate(exampleValuesWithInvalidCustomData).should.be.an.Object().and.have.property('city', ['A valid City is required if you enter a Street Address']);
+    validate(exampleValuesWithInvalidCustomData).should.eql({
+      address: {
+        city: ['A valid City is required if you enter a Street Address']
+      }
+    });
   });
 
   // testing this as it's the only difference between the validator

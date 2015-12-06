@@ -10,7 +10,9 @@
     "test:watch": "npm test -- --watch"
   },
   "babel": {
-    "presets": ["es2015"]
+    "presets": [
+      "es2015"
+    ]
   },
   "author": "https://github.com/willmcclellan",
   "license": "MIT",
@@ -23,6 +25,7 @@
     "mocha": "^2.3.3"
   },
   "dependencies": {
+    "flat": "^1.6.0",
     "lodash": "^3.10.1",
     "validator": "^4.2.1"
   }
