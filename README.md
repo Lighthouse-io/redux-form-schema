@@ -11,7 +11,7 @@ Although redux-form is currently a dependency, the idea is to make the schema co
 npm install --save redux-form-schema
 ```
 
-```
+```javascript
 // schema.js
 
 import buildSchema from 'redux-form-schema'
@@ -49,7 +49,7 @@ const schema = {
 export default buildSchema(schema)
 ```
 
-```
+```javascript
 // component.js (using redux-form)
 
 import { component } from 'react'
@@ -119,7 +119,7 @@ Custom error message if the field invalidates. By default, there are built in er
 
 Options for complex validations (i.e. they accepts options). Any of the validators available in [validator.js](https://github.com/chriso/validator.js) are available to use, and are specified **without** the 'is' prefix.
 
-```
+```javascript
 validate: {
   // validate value is an integer that is a minimum of 0 and a maximum of 100
   int: {
@@ -139,7 +139,7 @@ E.g by default, the `int` validator used in the example will use your fields lab
 
 The only difference when specifying schema validation in relation to the [validator.js](https://github.com/chriso/validator.js) API is the `length` validator. In `redux-form-schema` you specify min and max length as an object, just like with the `int` validator, e.g:
 
-```
+```javascript
 {
   name: {
     validate: {
