@@ -9,9 +9,8 @@
   "parser": "babel-eslint",
   "rules": {
     "quotes": [2, "single"],
-    "semi": [2, "never"],                                                                       // http://eslint.org/docs/rules/semi
-    "indent": [2, 2, {"SwitchCase": 1}],                // http://eslint.org/docs/rules/indent
+    "semi": [2, "never"],
+    "indent": [2, 2, {"SwitchCase": 1}],
     "strict": [2, "never"],
-  } 
+  }
 }
-

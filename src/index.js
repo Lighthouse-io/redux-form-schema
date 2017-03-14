@@ -1,21 +1,14 @@
 import validator, { isInt } from 'validator'
-import each from 'lodash/collection/each'
-import startCase from 'lodash/string/startCase'
-import isFunction from 'lodash/lang/isFunction'
-import isUndefined from 'lodash/lang/isUndefined'
-import isString from 'lodash/lang/isString'
+import each from 'lodash/each'
+import startCase from 'lodash/startCase'
+import isFunction from 'lodash/isFunction'
+import isUndefined from 'lodash/isUndefined'
+import isString from 'lodash/isString'
 import errorMessages from './error-messages'
 
-export default (schema) => {
-  const fields = Object.keys(schema)
-  const validate = buildValidationFn(schema)
-  return {
-    fields,
-    validate
-  }
-}
+export default (schema) => buildValidateFn(schema)
 
-function buildValidationFn(schema) {
+function buildValidateFn(schema) {
   return (formValues) => {
     const errors = {}
 
@@ -28,7 +21,6 @@ function buildValidationFn(schema) {
       const { label, required, type, validate, error } = definition
       const fieldValue = formValues[fieldRef]
       const fieldValueExists = isDefined(formValues[fieldRef])
-
 
       // required is active if it is `true` or a function that returns
       // true when passed the form values as an argument. This allows
@@ -81,7 +73,6 @@ function buildValidationFn(schema) {
           }
         })
       }
-
     })
 
     return errors
