@@ -14,10 +14,10 @@ npm install --save redux-form-schema
 ```javascript
 // schema.js
 
-import buildSchema from 'redux-form-schema'
+import buildValidateFn from 'redux-form-schema'
 
-const schema = {
-  'name': {
+export const schema = {
+  name: {
     label: 'Name',
     required: true,
     error: 'The name field is required' // optional custom error message
@@ -25,7 +25,7 @@ const schema = {
   'street-address': {
     label: 'Street Address'
   },
-  'city': {
+  city: {
     label: 'City',
     // conditional required validation
     required: (formValues) => formValues['street-address'],
@@ -46,39 +46,46 @@ const schema = {
   }
 }
 
-export default buildSchema(schema)
+export const validateFn = buildValidateFn(schema)
 ```
 
 ```javascript
 // component.js (using redux-form)
 
 import { component } from 'react'
-import { connectReduxForm } from 'redux-form'
-import { fields, validate } from './schema'
+import { Field, reduxForm } from 'redux-form'
+import { schema, validateFn } from './schema'
 
-@connectReduxForm({
+const renderInput = field =>
+  <div>
+  <label htmlFor={field.input.name}>field.label</label>
+    <input {...field.input} type={field.type}/>
+    {field.meta.touched &&
+     field.meta.error &&
+     <span className="error">{field.meta.error}</span>}
+  </div>
+
+@reduxForm({
   form: 'myForm',
-  fields: fields,
-  validate: validate
+  validate: validateFn
 }
 export default class FormComponent extends Component {
 
   static propTypes = {
     handleSubmit: PropTypes.func.isRequired,
-    fields: PropTypes.obj.isRequired,
     validate: PropTypes.func.isRequired,
   }
 
   render() {
-    const { fields, handleSubmit, error } = this.props
+    const { handleSubmit, error } = this.props
 
     return (
-        <form onSubmit={handleSubmit()} noValidate>
-          <input type='text' {...fields.name} />
-          <input type='email' {...fields.email} />
-          <input type='text' {...fields['street-address']} />
-          <input type='text' {...fields.city} />
-        </form>
+      <form onSubmit={handleSubmit()} noValidate>
+        <Field {...schema.name} component={renderInput} />
+        <Field {...schema['street-address']} component={renderInput} />
+        <Field {...schema.city} component={renderInput} />
+        <Field {...schema['date-of-birth']} component={renderInput} />
+      </form>
     )
   }
 }
