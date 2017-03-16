@@ -1,9 +1,9 @@
-import build from '../../src/'
+import { buildValidationFn } from '../../src/'
 import omit from 'lodash/omit'
 import includes from 'lodash/includes'
 
 const exampleSchema = {
-  'name': {
+  name: {
     label: 'Name',
     required: true,
     validate: {
@@ -13,7 +13,7 @@ const exampleSchema = {
       }
     }
   },
-  'email': {
+  email: {
     label: 'Email',
     error: 'You must enter an email address for your account',
     type: 'email'
@@ -21,7 +21,7 @@ const exampleSchema = {
   'street-address': {
     label: 'Street Address'
   },
-  'city': {
+  city: {
     label: 'City',
     error: 'A valid City is required if you enter a Street Address',
     // required if street address exists
@@ -39,7 +39,7 @@ const exampleSchema = {
       before: (new Date()).toString()
     }
   },
-  'score': {
+  score: {
     label: 'Score',
     type: 'numeric',
     validate: {
@@ -49,13 +49,13 @@ const exampleSchema = {
       }
     }
   },
-  'category': {
+  category: {
     label: 'Category',
     validate: {
       in: ['red', 'green', 'blue']
     }
   },
-  'latitude': {
+  latitude: {
     label: 'Latitude',
     required: (formValues) => !!formValues.longitude,
     validate: {
@@ -65,7 +65,7 @@ const exampleSchema = {
       }
     }
   },
-  'longitude': {
+  longitude: {
     label: 'Longitude',
     required: (formValues) => !!formValues.latitude,
     validate: {
@@ -91,7 +91,7 @@ const exampleValidValues = {
 }
 
 describe('buildValidateFn', () => {
-  const validateFn = build(exampleSchema)
+  const validateFn = buildValidationFn(exampleSchema)
 
   it('should build a redux form validate fn based on a schema', () => {
     validateFn.should.be.a.Function()
@@ -215,5 +215,4 @@ describe('buildValidateFn', () => {
       .be.an.Object()
       .and.have.property('name', ['Name should be a minimum of 0 and a maximum of 20 characters'])
   })
-
 })

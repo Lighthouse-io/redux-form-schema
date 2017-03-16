@@ -33,9 +33,11 @@
   },
   "dependencies": {
     "lodash.foreach": "^4.5.0",
+    "lodash.get": "^4.4.2",
     "lodash.isfunction": "^3.0.8",
     "lodash.isstring": "^4.0.1",
     "lodash.isundefined": "^3.0.1",
+    "lodash.set": "^4.3.2",
     "lodash.startcase": "^4.4.0",
     "validator": "^4.2.1"
   }

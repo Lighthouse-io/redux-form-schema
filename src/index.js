@@ -1,12 +1,17 @@
-import validator, { isInt } from 'validator'
 import each from 'lodash/each'
-import startCase from 'lodash/startCase'
+import get from 'lodash/get'
 import isFunction from 'lodash/isFunction'
 import isUndefined from 'lodash/isUndefined'
 import isString from 'lodash/isString'
+import set from 'lodash/set'
+import startCase from 'lodash/startCase'
+import validator, { isInt } from 'validator'
+
 import errorMessages from './error-messages'
 
-export default (schema) => buildValidateFn(schema)
+const buildValidationFn = (schema) => buildValidateFn(schema)
+
+export { buildValidationFn }
 
 function buildValidateFn(schema) {
   return (formValues) => {
@@ -19,8 +24,8 @@ function buildValidateFn(schema) {
     // TODO this could possibly be done with lodash transform
     each(schema, (definition, fieldRef) => {
       const { label, required, type, validate, error } = definition
-      const fieldValue = formValues[fieldRef]
-      const fieldValueExists = isDefined(formValues[fieldRef])
+      const fieldValue = get(formValues, fieldRef)
+      const fieldValueExists = isDefined(fieldValue)
 
       // required is active if it is `true` or a function that returns
       // true when passed the form values as an argument. This allows
@@ -80,8 +85,11 @@ function buildValidateFn(schema) {
 }
 
 function addErrorToField(errors, fieldRef, errorMessage) {
-  errors[fieldRef] = errors[fieldRef] || []
-  errors[fieldRef].push(errorMessage)
+  const field = get(errors, fieldRef)
+
+  if (field) return field.push(errorMessage)
+
+  set(errors, fieldRef, [errorMessage])
 }
 
 
