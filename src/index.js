@@ -9,11 +9,7 @@ import validator, { isInt } from 'validator'
 
 import errorMessages from './error-messages'
 
-const buildValidationFn = (schema) => buildValidateFn(schema)
-
-export { buildValidationFn }
-
-function buildValidateFn(schema) {
+export function buildValidationFn(schema) {
   return (formValues) => {
     const errors = {}
 
@@ -91,7 +87,6 @@ function addErrorToField(errors, fieldRef, errorMessage) {
 
   set(errors, fieldRef, [errorMessage])
 }
-
 
 // Get validator by string (the part after 'is' in validator methods)
 // validatorId = 'email' => validator.isEmail
