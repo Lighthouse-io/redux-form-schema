@@ -14,7 +14,7 @@ npm install --save redux-form-schema
 ```javascript
 // schema.js
 
-import buildValidateFn from 'redux-form-schema'
+import buildValidationFn from 'redux-form-schema'
 
 export const schema = {
   name: {
@@ -46,7 +46,7 @@ export const schema = {
   }
 }
 
-export const validateFn = buildValidateFn(schema)
+export const validateFn = buildValidationFn(schema)
 ```
 
 ```javascript
