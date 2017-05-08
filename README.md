@@ -168,7 +168,7 @@ The only difference when specifying schema validation in relation to the [valida
 
 ## Credits
 
-* [redux-form]()
+* [redux-form](https://github.com/erikras/redux-form)
 * [validator.js](https://github.com/chriso/validator.js)
 * [@nicgordon](https://github.com/nicgordon) for the idea to use a schema as a way to manage forms
 
