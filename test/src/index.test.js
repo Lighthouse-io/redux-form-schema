@@ -1,10 +1,9 @@
-import build from '../'
-import should from 'should'
-import omit from 'lodash/object/omit'
-import contains from 'lodash/collection/contains'
+import { buildValidationFn } from '../../src/'
+import omit from 'lodash/omit'
+import includes from 'lodash/includes'
 
 const exampleSchema = {
-  'name': {
+  name: {
     label: 'Name',
     required: true,
     validate: {
@@ -14,7 +13,7 @@ const exampleSchema = {
       }
     }
   },
-  'email': {
+  email: {
     label: 'Email',
     error: 'You must enter an email address for your account',
     type: 'email'
@@ -22,14 +21,14 @@ const exampleSchema = {
   'street-address': {
     label: 'Street Address'
   },
-  'city': {
+  city: {
     label: 'City',
     error: 'A valid City is required if you enter a Street Address',
     // required if street address exists
     required: (formValues) => formValues['street-address'],
     validate: {
       validCity: (formValues, fieldValue) => {
-        return contains(['Melbourne', 'New York', 'London'], fieldValue)
+        return includes(['Melbourne', 'New York', 'London'], fieldValue)
       }
     }
   },
@@ -40,7 +39,7 @@ const exampleSchema = {
       before: (new Date()).toString()
     }
   },
-  'score': {
+  score: {
     label: 'Score',
     type: 'numeric',
     validate: {
@@ -50,13 +49,13 @@ const exampleSchema = {
       }
     }
   },
-  'category': {
+  category: {
     label: 'Category',
     validate: {
       in: ['red', 'green', 'blue']
     }
   },
-  'latitude': {
+  latitude: {
     label: 'Latitude',
     required: (formValues) => !!formValues.longitude,
     validate: {
@@ -66,7 +65,7 @@ const exampleSchema = {
       }
     }
   },
-  'longitude': {
+  longitude: {
     label: 'Longitude',
     required: (formValues) => !!formValues.latitude,
     validate: {
@@ -91,21 +90,16 @@ const exampleValidValues = {
   'longitude': '0'
 }
 
-describe('buildValidationFn', () => {
-  const formSchema = build(exampleSchema)
-  const { fields, validate } = formSchema
+describe('buildValidateFn', () => {
+  const validateFn = buildValidationFn(exampleSchema)
 
-  it('should build a redux form validation fn based on a schema', () => {
-    should.exist(formSchema)
-    formSchema.should.have.keys('fields', 'validate')
-    fields.should.be.an.Array()
-    fields.should.eql(Object.keys(exampleSchema))
-    validate.should.be.a.Function()
+  it('should build a redux form validate fn based on a schema', () => {
+    validateFn.should.be.a.Function()
   })
 
   it('should validate valid values', () => {
     // assert valid values pass validation
-    validate(Object.assign({}, exampleValidValues)).should
+    validateFn(Object.assign({}, exampleValidValues)).should
       .be.an.Object()
       .and.be.empty()
 
@@ -114,7 +108,7 @@ describe('buildValidationFn', () => {
       latitude: 0,
       longitude: '90'
     })
-    validate(exampleValidValuesWithNonString).should
+    validateFn(exampleValidValuesWithNonString).should
       .be.an.Object()
       .and.be.empty()
   })
@@ -122,7 +116,7 @@ describe('buildValidationFn', () => {
   it('should validate required fields', () => {
     // Required assertions
     const exampleValuesWithMissingName = omit(exampleValidValues, 'name')
-    validate(exampleValuesWithMissingName).should
+    validateFn(exampleValuesWithMissingName).should
       .be.an.Object()
       .and.have.property('name', ['Name is Required'])
 
@@ -130,23 +124,23 @@ describe('buildValidationFn', () => {
     const exampleValuesWithEmptyName = Object.assign({}, exampleValidValues, {
       name: ''
     })
-    validate(exampleValuesWithEmptyName).should
+    validateFn(exampleValuesWithEmptyName).should
       .be.an.Object()
       .and.have.property('name', ['Name is Required'])
 
     // DoB is not required and should pass validation if missing
     const exampleValuesWithNoDob = omit(exampleValidValues, 'date-of-birth')
-    validate(exampleValuesWithNoDob).should
+    validateFn(exampleValuesWithNoDob).should
       .be.an.Object()
       .and.be.empty()
 
     // conditional required
     let exampleValuesWithMissingConditionalRequired = omit(Object.assign({}, exampleValidValues), 'city')
-    validate(exampleValuesWithMissingConditionalRequired).should
+    validateFn(exampleValuesWithMissingConditionalRequired).should
       .be.an.Object()
       .and.have.property('city', ['A valid City is required if you enter a Street Address'])
     exampleValuesWithMissingConditionalRequired = omit(exampleValuesWithMissingConditionalRequired, 'street-address')
-    validate(exampleValuesWithMissingConditionalRequired).should
+    validateFn(exampleValuesWithMissingConditionalRequired).should
       .be.an.Object()
       .and.be.empty()
   })
@@ -156,7 +150,7 @@ describe('buildValidationFn', () => {
     const exampleValuesWithInvalidEmail = Object.assign({}, exampleValidValues, {
       email: 'example.com' // invalid email
     })
-    validate(exampleValuesWithInvalidEmail).should
+    validateFn(exampleValuesWithInvalidEmail).should
       .be.an.Object()
       // also checking for custom error message here
       .and.have.property('email', ['You must enter an email address for your account'])
@@ -167,7 +161,7 @@ describe('buildValidationFn', () => {
     const exampleValuesWithInvalidCategory = Object.assign({}, exampleValidValues, {
       category: 'pink' // invalid enum
     })
-    validate(exampleValuesWithInvalidCategory).should
+    validateFn(exampleValuesWithInvalidCategory).should
       .be.an.Object()
       // built in error message
       .and.have.property('category', ['Category should be one of red, green, blue'])
@@ -176,7 +170,7 @@ describe('buildValidationFn', () => {
     const exampleValuesWithInvalidScore = Object.assign({}, exampleValidValues, {
       score: '101' // invalid int
     })
-    validate(exampleValuesWithInvalidScore).should
+    validateFn(exampleValuesWithInvalidScore).should
       .be.an.Object()
       // built in error message
       .and.have.property('score', ['Score should be between 0 and 100'])
@@ -185,12 +179,12 @@ describe('buildValidationFn', () => {
   it('should validate complex validations conditionally', () => {
 
     const exampleValuesWithoutGeo = omit(exampleValidValues, ['latitude', 'longitude'])
-    validate(exampleValuesWithoutGeo).should
+    validateFn(exampleValuesWithoutGeo).should
       .be.an.Object()
       .and.be.empty()
 
     const exampleValuesWithoutLatitude = omit(exampleValidValues, 'latitude')
-    validate(exampleValuesWithoutLatitude).should
+    validateFn(exampleValuesWithoutLatitude).should
       .be.an.Object()
       .and.have.property('latitude', ['Latitude is Required'])
   })
@@ -199,14 +193,14 @@ describe('buildValidationFn', () => {
     const exampleValuesWithValidCustomData = Object.assign({}, exampleValidValues, {
       city: 'Melbourne' // Melbourne is valid
     })
-    validate(exampleValuesWithValidCustomData).should
+    validateFn(exampleValuesWithValidCustomData).should
       .be.an.Object()
       .and.be.empty()
 
     const exampleValuesWithInvalidCustomData = Object.assign({}, exampleValidValues, {
       city: 'Sydney' // sydney is an invalid city on our custom validator
     })
-    validate(exampleValuesWithInvalidCustomData).should
+    validateFn(exampleValuesWithInvalidCustomData).should
       .be.an.Object()
       .and.have.property('city', ['A valid City is required if you enter a Street Address'])
   })
@@ -217,9 +211,8 @@ describe('buildValidationFn', () => {
     const exampleValuesWithInvalidLength = Object.assign({}, exampleValidValues, {
       name: 'Thisnameistoolongandshoulderror',
     })
-    validate(exampleValuesWithInvalidLength).should
+    validateFn(exampleValuesWithInvalidLength).should
       .be.an.Object()
       .and.have.property('name', ['Name should be a minimum of 0 and a maximum of 20 characters'])
   })
-
 })

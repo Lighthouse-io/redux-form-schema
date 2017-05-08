@@ -1,21 +1,15 @@
+import each from 'lodash/each'
+import get from 'lodash/get'
+import isFunction from 'lodash/isFunction'
+import isUndefined from 'lodash/isUndefined'
+import isString from 'lodash/isString'
+import set from 'lodash/set'
+import startCase from 'lodash/startCase'
 import validator, { isInt } from 'validator'
-import each from 'lodash/collection/each'
-import startCase from 'lodash/string/startCase'
-import isFunction from 'lodash/lang/isFunction'
-import isUndefined from 'lodash/lang/isUndefined'
-import isString from 'lodash/lang/isString'
+
 import errorMessages from './error-messages'
 
-export default (schema) => {
-  const fields = Object.keys(schema)
-  const validate = buildValidationFn(schema)
-  return {
-    fields,
-    validate
-  }
-}
-
-function buildValidationFn(schema) {
+export function buildValidationFn(schema) {
   return (formValues) => {
     const errors = {}
 
@@ -26,9 +20,8 @@ function buildValidationFn(schema) {
     // TODO this could possibly be done with lodash transform
     each(schema, (definition, fieldRef) => {
       const { label, required, type, validate, error } = definition
-      const fieldValue = formValues[fieldRef]
-      const fieldValueExists = isDefined(formValues[fieldRef])
-
+      const fieldValue = get(formValues, fieldRef)
+      const fieldValueExists = isDefined(fieldValue)
 
       // required is active if it is `true` or a function that returns
       // true when passed the form values as an argument. This allows
@@ -81,7 +74,6 @@ function buildValidationFn(schema) {
           }
         })
       }
-
     })
 
     return errors
@@ -89,10 +81,12 @@ function buildValidationFn(schema) {
 }
 
 function addErrorToField(errors, fieldRef, errorMessage) {
-  errors[fieldRef] = errors[fieldRef] || []
-  errors[fieldRef].push(errorMessage)
-}
+  const field = get(errors, fieldRef)
 
+  if (field) return field.push(errorMessage)
+
+  set(errors, fieldRef, [errorMessage])
+}
 
 // Get validator by string (the part after 'is' in validator methods)
 // validatorId = 'email' => validator.isEmail

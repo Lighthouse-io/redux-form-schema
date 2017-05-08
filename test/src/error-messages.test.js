@@ -1,5 +1,4 @@
-import errorMessages from '../error-messages'
-import should from 'should'
+import errorMessages from '../../src/error-messages'
 
 describe('error-messages', () => {
   it('should return default message', () => {
