@@ -1,3 +1,17 @@
+DEPRECATED
+==========
+
+Lighthouse.io is no longer maintaining this module. As of Redux Form v6, it's possible to define validation/error handling at a field level, which made this module mostly obselete. 
+
+We still feel it's a good idea to absctract your form definition outside of your components for reuse, but this doesn't require yet another module. We're currently following a very similar structure to the schema defined below, which we destructure directly onto Redux Form `Field` components.
+
+Here's some useful links to other modules related to defining schemas and validation:
+
+- http://validatejs.org/
+- http://json-schema.org/
+- https://github.com/epoberezkin/ajv
+- https://github.com/molnarg/js-schema
+
 redux-form-schema
 =================
 
